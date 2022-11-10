@@ -13,17 +13,17 @@ public enum PrecisionIndex {
     TWO_HUNDRED_FIFTY_HOURS("defines.flow_precision_index.two_hundred_fifty_hours"),
     ONE_THOUSAND_HOURS("defines.flow_precision_index.one_thousand_hours");
 
-    private String gameName;
+    private String gameAlias;
 
-    PrecisionIndex(String gameName) {
-        this.gameName = gameName;
+    PrecisionIndex(String gameAlias) {
+        this.gameAlias = gameAlias;
     }
 
-    public String getGameName() {
-        return gameName;
+    public String getGameAlias() {
+        return gameAlias;
     }
 
     public static PrecisionIndex findByValue(final String abbr){
-        return Arrays.stream(values()).filter(value -> value.getGameName().equals(abbr)).findFirst().orElse(null);
+        return Arrays.stream(values()).filter(value -> value.getGameAlias().equals(abbr)).findFirst().orElse(null);
     }
 }

@@ -15,6 +15,6 @@ public class ItemProductionStatistics extends Reference{
 
     public String getFlowCount(Resource resource, Boolean input, PrecisionIndex precisionIndex, Boolean count) {
         return String.format("%s.get_flow_count{name = \"%s\", input=%s, precision_index = %s, count = %s}",
-                getAlias(), resource.getGameName(), input.toString(), precisionIndex.getGameName(), count.toString());
+                getAlias(), resource.getGameName(), input.toString(), precisionIndex.getGameAlias(), count.toString());
     }
 }

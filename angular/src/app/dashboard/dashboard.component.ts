@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.dataSourceIn.setData(this.resourcesIn)
     this.loadAllResourcesFlow();
-    this.resourceFlowInterval = setInterval(() => this.loadAllResourcesFlow(), 1000);
+    this.resourceFlowInterval = setInterval(() => this.loadAllResourcesFlow(), 5000);
   }
 
   loadAllResourcesFlow() {

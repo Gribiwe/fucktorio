@@ -16,8 +16,10 @@ public class RconService {
     @Value("${game.rcon.password}")
     private String password;
 
-    public String executeCommand(String command) {
-        command = getCommandExecution(command);
+    public String executeCommand(String command, boolean expectRepsone) {
+        if (expectRepsone) {
+            command = getCommandExecution(command);
+        }
         String response = null;
 
         try (RconClient client = RconClient.open("5.83.173.187", 12350, "1337228")) {
@@ -26,7 +28,7 @@ public class RconService {
             e.printStackTrace();
         }
 
-       return response.replace("\n", "");
+        return response.replace("\n", "");
     }
 
     private String getCommandExecution(String command) {
