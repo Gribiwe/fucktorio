@@ -1,0 +1,62 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+node_modules
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# Compiled output
+/angular/dist
+/angular/tmp
+/angular/out-tsc
+/angular/bazel-out
+
+# Node
+/angular/node_modules
+/angular/npm-debug.log
+/angular/yarn-error.log
+
+# IDEs and editors
+/angular/.idea/
+/angular/.project
+/angular/.classpath
+/angular/.c9/
+/angular/*.launch
+/angular/.settings/
+/angular/*.sublime-workspace
+
+/angular/.angular/cache
+/angular/.sass-cache/
+/angular/connect.lock
+/angular/coverage
+/angular/libpeerconnection.log
+/angular/testem.log
+/typings

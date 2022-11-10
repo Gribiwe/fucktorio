@@ -1,0 +1,126 @@
+$iron-plate:  #989aab;
+$iron-ore: #63667c;
+$copper-plate:  #966237;
+$copper-ore:  #af5628;
+
+.resource-image {
+  width: 30px!important;
+  height: 30px!important;
+  background-size: 100%!important;
+}
+
+.resource-color-marker {
+  width: 10px!important;
+  height: 46px!important;
+}
+
+.iron-plate {
+  background: url("https://wiki.factorio.com/images/Iron_plate.png");
+}
+
+.iron-plate-color-marker {
+  background: $iron-plate;
+}
+
+.mat-progress-bar .mat-progress-bar-fill {
+  animation: none;
+  transform-origin: top left;
+  transition: transform 1000ms ease!important;
+}
+
+.mat-progress-bar {
+  animation: none;
+  transform-origin: top left!important;
+  transition: transform 1000ms ease!important;
+}
+
+.iron-plate-color .mat-progress-bar-fill::after {
+  background-color: $iron-plate;
+}
+
+.iron-ore {
+  background: url("https://wiki.factorio.com/images/Iron_ore.png");
+}
+
+.iron-ore-color-marker {
+  background: $iron-ore;
+}
+
+.iron-ore-color .mat-progress-bar-fill::after {
+  background-color: $iron-ore;
+}
+
+.copper-plate {
+  background: url("https://wiki.factorio.com/images/Copper_plate.png");
+}
+
+.copper-plate-color-marker {
+  background: $copper-plate;
+}
+
+.copper-plate-color .mat-progress-bar-fill::after {
+  background-color: $copper-plate;
+}
+
+.copper-ore {
+  background: url("https://wiki.factorio.com/images/Copper_ore.png");
+}
+
+.copper-ore-color-marker {
+  background: $copper-ore;
+}
+
+.copper-ore-color .mat-progress-bar-fill::after {
+  background-color: $copper-ore;
+}
+
+.kumuki-row {
+  display: flex;
+
+
+
+  .first {
+    margin-left: 0px!important;
+  }
+
+  .second {
+    margin-right: 0px!important;
+  }
+}
+
+@media (min-width: 1300px) {
+  .kumuki-sm {
+    display: none;
+  }
+
+  .kumuki-table {
+    width: 50%!important;
+  }
+
+  .kumuki-row {
+    flex-direction: row;
+
+    > * {
+      margin: 20px!important;
+    }
+  }
+
+}
+
+@media (max-width: 1300px) {
+  .kumuki-lg {
+    display: none;
+  }
+
+  .kumuki-table {
+    width: 100%!important;
+  }
+
+  .kumuki-row {
+    flex-direction: column;
+
+    > * {
+      margin-bottom: 20px;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# add command to retrive single resource
+/sc getItemStats = function(resource, isInput, precision) return game.forces["player"].item_production_statistics.get_flow_count{name = resource, input=isInput, precision_index = precision, count = false}end
+
+# get specified resources, example: getResurces_FS({"copper-plate", "copper-ore"}, true) - returns json of resource inputs {"resource": amount}
+/c getResources_FS = function(resources, isInput, precision) local result = {} for i, resource in ipairs(resources) do result[resource] = getItemStats(resource, isInput, precision) end return game.table_to_json(result)end
+
+
+# ahuy
+/c getResources_FS = function(resources, isInput, precision) local result = {} for i, resource in ipairs(resources) do result[resource] = game.forces["player"].item_production_statistics.get_flow_count{name = resource, input=isInput, precision_index = precision, count = false} end return game.table_to_json(result)end
+
+# work at less with 30 items
+/c game.player.print(getResources_FS({"copper-plate", "copper-ore"}, true, defines.flow_precision_index.five_seconds))
