@@ -16,8 +16,8 @@ public class ProductionController {
     @Autowired
     ProductionService productionService;
 
-    @GetMapping("resource-list")
-    public List<ResourceAmount> getResourceList(@RequestParam Boolean isInput, @RequestParam String precisionIndex) {
-        return productionService.getAllFlowCount(isInput, PrecisionIndex.findByValue(precisionIndex));
-    }
+//    @GetMapping("resource-list")
+//    public List<ResourceAmount> getResourceList(@RequestParam Boolean isInput, @RequestParam String precisionIndex) {
+//        return productionService.getAllFlowCount(isInput, PrecisionIndex.findByValue(precisionIndex));
+//    }
 }

@@ -1,6 +1,7 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
 import {MediaMatcher} from "@angular/cdk/layout";
 import {TranslateService} from "@ngx-translate/core";
+import {DataService} from "./service/data.service";
 
 @Component({
   selector: 'app-root',
@@ -16,19 +17,23 @@ export class AppComponent {
     {text: "statistics", route: "/dashboard"},
     {text: "test2"}
   ];
-  // fillerNav = Array.from({length: 50}, (_, i) => `Nav Item ${i + 1}`);
 
   private _mobileQueryListener: () => void;
 
   constructor(changeDetectorRef: ChangeDetectorRef,
               media: MediaMatcher,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private dataService: DataService) {
     translate.setDefaultLang('en');
     translate.use('en');
 
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
+  }
+
+  ngOnInit() {
+
   }
 
   ngOnDestroy(): void {

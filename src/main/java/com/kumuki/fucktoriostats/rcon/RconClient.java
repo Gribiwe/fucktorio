@@ -1,5 +1,7 @@
 package com.kumuki.fucktoriostats.rcon;
 
+import lombok.SneakyThrows;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -100,6 +102,10 @@ public class RconClient implements Closeable {
         return send(TYPE_COMMAND, command);
     }
 
+    public boolean isConnected() {
+        return this.socketChannel.isConnected();
+    }
+
     @Override
     public void close() {
         try {
@@ -113,6 +119,7 @@ public class RconClient implements Closeable {
         send(TYPE_AUTH, password);
     }
 
+    @SneakyThrows
     private String send(int type, String payload) {
         int requestId = currentRequestId.getAndIncrement();
 
@@ -142,8 +149,14 @@ public class RconClient implements Closeable {
         return new String(bodyBytes, PAYLOAD_CHARSET);
     }
 
+    private long getSleepTime(int size) {
+        return size / 100; // wait 1 ms for every 100 bytes. 0.1 mB/sec
+    }
+
+    @SneakyThrows
     private ByteBuffer readResponse() {
         int size = readData(Integer.BYTES).getInt();
+        Thread.sleep(getSleepTime(size)); // wait for all the data cells
         ByteBuffer dataBuffer = readData(size - (2 * Byte.BYTES));
         ByteBuffer nullsBuffer = readData(2 * Byte.BYTES);
 
@@ -157,6 +170,7 @@ public class RconClient implements Closeable {
         return dataBuffer;
     }
 
+    @SneakyThrows
     private ByteBuffer readData(int size) {
         ByteBuffer buffer = ByteBuffer.allocate(size);
         int readCount;
