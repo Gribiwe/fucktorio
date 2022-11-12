@@ -3,10 +3,11 @@ import {ResourceStat, ResourceStatPercentage} from "../entity/resource-stat";
 import {ProductionService} from "../service/production.service";
 import {PrecisionIndex} from "../entity/precision-index";
 import {ProgressBarMode} from "@angular/material/progress-bar";
-import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {DataSource} from "@angular/cdk/collections";
 import {Observable, ReplaySubject} from "rxjs";
+import {DataService} from "../service/data.service";
+import {Data} from "../entity/data";
 
 @Component({
   selector: 'app-dashboard',
@@ -18,8 +19,12 @@ import {Observable, ReplaySubject} from "rxjs";
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private productionService: ProductionService) {
+  constructor(
+    private productionService: ProductionService,
+    private dataService: DataService) {
   }
+
+  data: Data = this.dataService.data;
 
   @ViewChild('empTbSort') empTbSort = new MatSort();
 
@@ -28,7 +33,6 @@ export class DashboardComponent implements OnInit {
   resourcesIn: ResourceStatPercentage[] = [];
   dataSourceIn = new ResourceDataSource(this.resourcesIn);
 
-
   resourcesOut: ResourceStatPercentage[] = [];
   dataSourceOut = new ResourceDataSource(this.resourcesIn);
 
@@ -36,48 +40,81 @@ export class DashboardComponent implements OnInit {
 
   precisionIndex: PrecisionIndex = PrecisionIndex.FIVE_SECONDS
 
-  resourceFlowInterval: any;
-
   mode: ProgressBarMode = 'determinate'
 
   ngOnInit(): void {
+    setInterval(() => {
+      this.updateData()
+    }, 400)
     this.dataSourceIn.setData(this.resourcesIn)
-    this.loadAllResourcesFlow();
-    this.resourceFlowInterval = setInterval(() => this.loadAllResourcesFlow(), 5000);
   }
 
-  loadAllResourcesFlow() {
-    this.loadResourcesFlow(true);
-    this.loadResourcesFlow(false);
-  }
+  updateData() {
+    this.data = this.dataService.data;
+    let dataIn: ResourceStat[] = [];
+    let dataOut: ResourceStat[] = [];
 
-  loadResourcesFlow(isInput: boolean) {
-    this.productionService.getResourceList(isInput, this.precisionIndex).subscribe(
-      (res: ResourceStat[]) => {
-        this.updateStats(res, isInput)
-      });
-  }
-
-  list: any = []
-  updateStats(resourceStats: ResourceStat[], isInput: boolean) {
-    let resourceStatPercentages = this.makeProgress(resourceStats);
-
-    if (isInput) {
-      if (this.resourcesIn === []) {
-        this.resourcesIn = resourceStatPercentages
-      } else {
-        this.mergeLists(resourceStatPercentages, isInput);
-      }
-    } else {
-      if (this.resourcesOut === []) {
-        this.resourcesOut = resourceStatPercentages
-      } else {
-        this.mergeLists(resourceStatPercentages, isInput);
-      }
+    if (this.precisionIndex === PrecisionIndex.FIVE_SECONDS) {
+      dataIn = this.dataService.data.fiveSecondResourcesIn;
+      dataOut = this.dataService.data.fiveSecondResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.ONE_MINUTE) {
+      dataIn = this.dataService.data.oneMinuteResourcesIn;
+      dataOut = this.dataService.data.oneMinuteResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.TEN_MINUTES) {
+      dataIn = this.dataService.data.tenMinutesResourcesIn;
+      dataOut = this.dataService.data.tenMinutesResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.ONE_HOUR) {
+      dataIn = this.dataService.data.oneHourResourcesIn;
+      dataOut = this.dataService.data.oneHourResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.TEN_HOURS) {
+      dataIn = this.dataService.data.tenHourResourcesIn;
+      dataOut = this.dataService.data.tenHourResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.FIFTY_HOURS) {
+      dataIn = this.dataService.data.fiftyHourResourcesIn;
+      dataOut = this.dataService.data.fiftyHourResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.TWO_HUNDRED_FIFTY_HOURS) {
+      dataIn = this.dataService.data.twoHundredFiftyHourResourcesIn;
+      dataOut = this.dataService.data.twoHundredFiftyHourResourcesOut;
+    } else if (this.precisionIndex === PrecisionIndex.ONE_THOUSAND_HOURS) {
+      dataIn = this.dataService.data.thousandHourResourcesIn;
+      dataOut = this.dataService.data.thousandHourResourcesOut;
     }
 
-    this.dataSourceIn.setData(this.resourcesIn.sort((a, b) => a.amount > b.amount ? -1 : 1))
-    this.dataSourceOut.setData(this.resourcesOut.sort((a, b) => a.amount > b.amount ? -1 : 1))
+    let dataInPercentage = this.makePercentage(dataIn);
+    let dataOutPercentage = this.makePercentage(dataOut);
+
+    this.mergeLists(dataInPercentage, true);
+    this.mergeLists(dataOutPercentage, false);
+
+    this.clearEmptyRows(dataInPercentage, true);
+    this.clearEmptyRows(dataOutPercentage, false);
+
+    this.dataSourceIn.setData(this.resourcesIn.sort((a, b) => a.amount > b.amount ? -1 : 1)
+      .filter(value => value.amount > 0));
+    this.dataSourceOut.setData(this.resourcesOut.sort((a, b) => a.amount > b.amount ? -1 : 1)
+      .filter(value => value.amount > 0));
+  }
+
+  mergeLists(resourceStatPercentage: ResourceStatPercentage[], isInput: boolean) {
+    resourceStatPercentage.forEach(value => {
+      this.refreshData(value, isInput);
+    })
+  }
+
+  clearEmptyRows(resourceStatPercentage: ResourceStatPercentage[], isInput: boolean) {
+    if (isInput) {
+      this.resourcesIn.forEach((value, i) => {
+        if (resourceStatPercentage.find(req => req.resource === value.resource) === undefined) {
+          this.resourcesIn.splice(i,1);
+        }
+      })
+    } else {
+      this.resourcesOut.forEach((value, i) => {
+        if (resourceStatPercentage.find(req => req.resource === value.resource) === undefined) {
+          this.resourcesOut.splice(i,1);
+        }
+      })
+    }
   }
 
   refreshData(resourceStatPercentage: ResourceStatPercentage, isInput: boolean) {
@@ -109,33 +146,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  mergeLists(resourceStatPercentage: ResourceStatPercentage[], isInput: boolean) {
-    resourceStatPercentage.forEach(value => {
-      this.refreshData(value, isInput);
-    })
-  }
-
-  makeProgress(resourceStats: ResourceStat[]): ResourceStatPercentage[] {
+  makePercentage(dataRaw: ResourceStat[]): ResourceStatPercentage[] {
     let result: ResourceStatPercentage[] = [];
-    if (resourceStats.length === 0) {
-      result = [];
-    } else {
-      resourceStats.sort((a, b) => a.amount > b.amount ? -1 : 1);
-      let biggestAmount = resourceStats[0].amount;
 
-      for (const element of resourceStats) {
-        let item = new ResourceStatPercentage();
-        item.amount = element.amount;
-        item.resource = element.resource;
-        item.percentages = element.amount / biggestAmount * 100;
+    dataRaw = dataRaw.sort((a, b) => a.amount > b.amount ? -1 : 1);
+    let maxAmount = dataRaw[0].amount;
+    dataRaw.forEach(resource => result.push(new ResourceStatPercentage(resource.resource, resource.amount, resource.amount / maxAmount * 100)))
 
-        result.push(item);
-      }
-    }
-
-    return result;
+    return result
   }
-
 }
 
 class ResourceDataSource extends DataSource<ResourceStatPercentage> {
@@ -150,7 +169,8 @@ class ResourceDataSource extends DataSource<ResourceStatPercentage> {
     return this._dataStream;
   }
 
-  disconnect() {}
+  disconnect() {
+  }
 
   setData(data: ResourceStatPercentage[]) {
     this._dataStream.next(data);
